@@ -13,8 +13,8 @@
 
 #define nrl 0
 #define nrh 0
-#define ncl  // tamaño de la imagen
-#define nch  // tamaño de la imagen
+#define ncl  // taille de l'image
+#define nch  // taille de l'image
 
 #define Efond 0
 #define Emouv 255
