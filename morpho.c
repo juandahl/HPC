@@ -1,6 +1,6 @@
 //morphologie mathématique
 
-//existe deux opérations de base : la dilatation de X notée  B(X) et l’érosion de X noté B(X).
+
 void dilatation3x3(uint8** X,uint8** B, long nrl,long nrh,long ncl,long nch)
 {
 
