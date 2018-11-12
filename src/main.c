@@ -9,6 +9,6 @@
 int main(int argc, char *argv[])
 {
     test_routine_FrameDifference(20);
-    //test_routine_sigmaDelta();
+    test_routine_sigmaDelta();
     return 0;
 }

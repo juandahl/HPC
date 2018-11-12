@@ -69,7 +69,7 @@ void test_routine_FrameDifference(int threshold)
 
 
 
-/*void test_routine_sigmaDelta()
+void test_routine_sigmaDelta()
 {
     puts("-----------------------------");
     puts("-- test_routine_sigmaDelta --");
@@ -150,5 +150,5 @@ void test_routine_FrameDifference(int threshold)
     free_ui8matrix(Vt, nrl, nrh, ncl, nch );
     free_ui8matrix(Et, nrl, nrh, ncl, nch );
 
-}*/
+}
 
