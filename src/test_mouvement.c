@@ -38,13 +38,14 @@ void test_routine_FrameDifference(int threshold)
 
     for(int i = 1; i <= NUMBER_IMAGES; i++)
     {
-        sprintf(imagePath, "hall/hall000%03d.pgm.pgm", i);
-        MLoadPGM_ui8matrix(imagePath, nrl, nrh, ncl, nch, It);
+        sprintf(imagePath, "hall/hall000%03d.pgm", i);
+	It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
+        //MLoadPGM_ui8matrix(imagePath, nrl, nrh, ncl, nch, It);
         CHRONO(routine_FrameDifference(It, Itm1, Et, nrl, nrh, ncl, nch, threshold), numcycles);
         totalCycle+=numcycles;
 
         
-        sprintf(outputPath, "FrameDifference/hall000%03d.pgm.pgm", i);
+        sprintf(outputPath, "FrameDifference/hall000%03d.pgm", i);
         SavePGM_ui8matrix(Et, nrl, nrh, ncl, nch, outputPath);
         copy_ui8matrix_ui8matrix(It, nrl, nrh, ncl, nch, Itm1);
     }

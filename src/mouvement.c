@@ -26,14 +26,14 @@ void routine_FrameDifference(uint8** I1, uint8** I0, uint8** E0, long rawl, long
     ncl = coll;
     nch = colh;
     //matrice de taille [nrl..nrh][ncl..nch]
-    long nrl, nrh, ncl, nch;
+    //long nrl, nrh, ncl, nch;
     /*//chargement de 2 images
     uint8 **I0 =  LoadPGM_ui8matrix(image1, &nrl, &nrh, &ncl, &nch);
     uint8 **I1 =  LoadPGM_ui8matrix(image2, &nrl, &nrh, &ncl, &nch);*/
 
 
     //uint8 **E0 =  ui8matrix(nrl, nrh, ncl, nch);
-    uint8 **O0 = ui8matrix(nrl, nrh, ncl, nch);
+    uint8** O0 = ui8matrix(nrl, nrh, ncl, nch);
     for(int i = nrl; i < nrh; i++ )
     {
         for(int j = ncl; j < nch; j++)
@@ -47,24 +47,6 @@ void routine_FrameDifference(uint8** I1, uint8** I0, uint8** E0, long rawl, long
         }
     }
     
-    /*for(int i = nrl; i < nrh; i++ )
-    {
-        for(int j = ncl; j < nch; j++)
-        {
-            if(O0[i][j] < threshold)
-                E0[i][j] = Efond; //pas de mouvement
-            else
-                E0[i][j] = Emouv; //si mouvement
-
-        }
-    }*/
-
-    //generation d'une nouvelle image
-    /*SavePGM_ui8matrix(E0, nrl, nrh, ncl, nch, "frame_difference.pgm");
-    free_ui8matrix(I0, nrl, nrh, ncl, nch);
-    free_ui8matrix(I1, nrl, nrh, ncl, nch);
-    free_ui8matrix(E0, nrl, nrh, ncl, nch);
-    free_ui8matrix(O0, nrl, nrh, ncl, nch);*/
 }
 
 int maxmin(uint8 ** Vt)
