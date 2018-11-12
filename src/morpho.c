@@ -4,8 +4,11 @@
 
 #include "nrdef.h"
 #include "vnrutil.h"
+<<<<<<< HEAD
 #include "nrutil.h"
 #include "morpho.h"
+=======
+>>>>>>> 839c898635d44d5674d759ae2968f254c1dee978
 
 void routine_dilatation3x3(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
 {

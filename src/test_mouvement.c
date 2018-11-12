@@ -1,16 +1,23 @@
+<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+=======
+#define NUMBER_IMAGES 300
+>>>>>>> 839c898635d44d5674d759ae2968f254c1dee978
 #include "nrdef.h"
 #include "nrutil.h"
 #include "mymacro.h"
 
+<<<<<<< HEAD
 #include "mouvement.h"
 #include "test_mouvement.h"
 
 #define NUMBER_IMAGES 300
 
+=======
+>>>>>>> 839c898635d44d5674d759ae2968f254c1dee978
 void test_routine_sigmaDelta()
 {
     puts("-----------------------------");
@@ -20,22 +27,26 @@ void test_routine_sigmaDelta()
     //Inicialization variables
     char imagePath[40];
     char outputPath[40];
-    long nrl, nrh, ncl, nch; // variables needed to load images
+    int nrl, nrh, ncl, nch; // variables needed to load images
     long numCycles, totalCycles; //cycles counters 
-    char initialImagePath[40] = "hall/hall000000.pgm"; // first image It-1
-
+    char initialImagePath[40]; // first image It-1
+    sprintf(initialImagePath,"hall/hall000000.pgm");
+    
+    printf("%s\n", initialImagePath);
     //inicial matrix(step 0)
-    uint8 **It1;
+    uint8 **It1 = ui8matrix(nrl, nrh, ncl, nch);
+
     MLoadPGM_ui8matrix(initialImagePath, nrl, nrh, ncl, nch, It1);
+
     uint8 **Mt1 =  ui8matrix(&nrl, &nrh, &ncl, &nch);
     uint8 **Vt1 =  ui8matrix(&nrl, &nrh, &ncl, &nch);
+    printf("%s\n", "pasa");
 
     //initial matrix (step1)
     uint8 **It = ui8matrix(nrl, nrh, ncl, nch);
     uint8 **Et = ui8matrix(nrl, nrh, ncl, nch);
     uint8 **Mt =  ui8matrix(nrl, nrh, ncl, nch);
     uint8 **Vt =  ui8matrix(nrl, nrh, ncl, nch);
-
 
 
     // ------------ //
