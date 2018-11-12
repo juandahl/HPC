@@ -5,8 +5,8 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "include/nrdef.h"
-#include "include/nrutil.h"
+#include "nrdef.h"
+#include "nrutil.h"
 
 #define VMIN 1
 #define VMAX 254

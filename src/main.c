@@ -1,42 +1,16 @@
-/* -------------- */
-/* --- main.c --- */
-/* -------------- */
-
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "nrdef.h"
 #include "nrutil.h"
 
-#include "vnrdef.h"
-#include "vnrutil.h"
+#include "morpho.c"
 
-#include "mutil.h"
-
-#include "test_matrix.h"
-
-#include "mymacro.h"
-
-// ============
-void info(void)
-// ============
-{
-#ifdef ENABLE_BENCHMARK
-    puts("#############################");
-    puts("mode Benchmark ON & DEBUG OFF");
-    puts("#############################");
-#else
-    puts("#############################");
-    puts("mode Benchmark OFF & DEBUG ON");
-    puts("#############################");
-#endif
-}
-// =============================
 int main(int argc, char *argv[])
-// =============================
 {
-    info();
-    //main_matrix(argc, argv);
-    main_stencil(argc, argv);
-
-    return 0;   
+    long nrl, nrh, ncl, nch;
+    uint8 **A = LoadPGM_ui8matrix("./morpho.png", &nrl, &nrh, &ncl, &nch);
+    uint8 **B = ui8matrix(nrl, nrh, ncl, nch);
+    routine_erosion3x3(A, B, nrl, ncl, nrh, nch);
+    return 0;
 }

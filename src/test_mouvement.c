@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "include/nrutil.h"
-#include "include/nrutil.h"
-#include "include/mymacro.h"
+#include "nrutil.h"
+#include "nrdef.h"
+#include "mymacro.h"
 
 #include "mouvement.c"
 
