@@ -69,17 +69,21 @@ int maxmin(uint8 ** Vt)
         return VMIN;
 }
 
-void routine_SigmaDelta_step0_inicialisation(uint8** It1, uint8 **M, uint8 **V, int rawl, int rawh, int coll, int colh )
+void routine_SigmaDelta_step0_inicialisation(uint8** It1, uint8 **M, uint8 **V, long rawl, long rawh, long coll, long colh )
 {
+
+
     nrl = rawl;
     nrh = rawh;
     ncl = coll;
     nch = colh;    
+
     for(int i = nrl; i <= nrh; i++ )
         for(int j = ncl; j <= nch; j++)
         {
             M[i][j] = It1[i][j];
             V[i][j] = VMIN;
+
         }
 }
 
