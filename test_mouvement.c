@@ -2,78 +2,94 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "include/nrutil.h"
+#include "include/nrutil.h"
+#include "include/mymacro.h"
+
+#include "mouvement.c"
+
+#define NUMBER_IMAGES 300
+
 void test_routine_sigmaDelta()
 {
+    puts("-----------------------------");
+    puts("-- test_routine_sigmaDelta --");
+    puts("-----------------------------");
 
-    /////////////// Pour le cycle par point////////////
-    double cycles;
+    //Inicialization variables
+    char imagePath[40];
+    char outputPath[40];
+    long nrl, nrh, ncl, nch; // variables needed to load images
+    long numCycles, totalCycles; //cycles counters 
+    char initialImagePath[40] = "hall/hall000000.pgm"; // first image It-1
 
-    char *format = "%6.2f \n";
-    double cycleTotal = 0;
-    int iter, niter = 2;
-    int run, nrun = 5;
-    double t0, t1, dt, tmin, t;
-    ///////////////////////////////////////////////
+    //inicial matrix(step 0)
+    uint8 **It1;
+    MLoadPGM_ui8matrix(initialImagePath, nrl, nrh, ncl, nch, It1);
+    uint8 **Mt1 =  ui8matrix(&nrl, &nrh, &ncl, &nch);
+    uint8 **Vt1 =  ui8matrix(&nrl, &nrh, &ncl, &nch);
 
-
-
-    //m[nrl..nrh][ncl..nch]
-    char nomImageLoad[50];// = "car3/car_3";
-    char nomImageSave[50];// = "car3Sigma/car_3"
-    long nrl, nrh, ncl, nch;
-
-
-
-    sprintf(nomImageLoad,"car3/car_3000.pgm");//Image a t-1
-    uint8 **Itm1 =  LoadPGM_ui8matrix(nomImageLoad, &nrl, &nrh, &ncl, &nch);
+    //initial matrix (step1)
     uint8 **It = ui8matrix(nrl, nrh, ncl, nch);
-    uint8 **Et = ui8matrix(nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD);
+    uint8 **Et = ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Mt =  ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Vt =  ui8matrix(nrl, nrh, ncl, nch);
 
 
-    uint8 **Vt = ui8matrix(nrl, nrh, ncl, nch);
-    uint8 **Vtm1 =  ui8matrix(nrl, nrh, ncl, nch);
 
-    uint8 **Mt = ui8matrix(nrl, nrh, ncl, nch);
-    uint8 **Mtm1 =  ui8matrix(nrl, nrh, ncl, nch);
+    // ------------ //
+    // -- calcul -- //
+    // ------------ //
+    routine_SigmaDelta_step0_inicialisation(It1, Mt1, Vt1, nrl, nrh, ncl, nch );
 
-    routine_SigmaDelta_step0(Itm1, Mtm1, Vtm1, nrl, nrh, ncl, nch);
-
-    for(int i = 1; i <= NBIMAGES; i++)
+    for(int i = 1; i <= NUMBER_IMAGES; i++)
     {
-        sprintf(nomImageLoad,"car3/car_3%03d.pgm",i);//Image a t
-        MLoadPGM_ui8matrix(nomImageLoad, nrl, nrh, ncl, nch, It);
+        sprintf(imagePath, "hall/hall000%03d%s.pgm", i );
+        MLoadPGM_ui8matrix(imagePath, nrl, nrh, ncl, nch, It); //Load the new image
 
-        //routine_SigmaDelta_1step(It, Vt, Vtm1, Mt, Mtm1, Et, nrl, nrh, ncl, nch);
-        CHRONO(routine_SigmaDelta_1step(It, Vt, Vtm1, Mt, Mtm1, Et, nrl, nrh, ncl, nch), cycles);
-        cycleTotal+=cycles;
-        //routine_SigmaDelta_1stepO(It, Itm1, Vt, Vtm1, Mt, Mtm1, Et, nrl, nrh, ncl, nch); // Pas si vraiment optimisé que ca quand on compile avec -O3...
-
-        sprintf(nomImageSave,"car3Sigma/car_3%03d.pgm",i);
-        SavePGM_ui8matrix(Et, nrl, nrh, ncl, nch, nomImageSave);//Copie de t a t-1
-        copy_ui8matrix_ui8matrix(Mt, nrl, nrh, ncl, nch, Mtm1);
-        copy_ui8matrix_ui8matrix(Vt, nrl, nrh, ncl, nch, Vtm1);
-        copy_ui8matrix_ui8matrix(It, nrl, nrh, ncl, nch, Itm1);
+        
+        CHRONO(routine_SigmaDelta_step1(It, Mt1, Mt, Vt, Vt1, Et), numCycles);
+        totalCycles = totalCycles + numCycles;
+        
+        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i);
+        SavePGM_ui8matrix(Et, nrl, nrh, ncl, nch, outputPath);
+        //update state of matrix
+        copy_ui8matrix_ui8matrix(Mt, nrl, nrh, ncl, nch, Mt1);
+        copy_ui8matrix_ui8matrix(Vt, nrl, nrh, ncl, nch, Vt1);
+        copy_ui8matrix_ui8matrix(It, nrl, nrh, ncl, nch, It1);
 
         /*memcpy(Mtm1[nrl], Mt[nrl], sizeof(uint8)*(nrow*ncol));
         memcpy(Vtm1[nrl], Vt[nrl], sizeof(uint8)*(nrow*ncol));
         memcpy(Itm1[nrl], It[nrl], sizeof(uint8)*(nrow*ncol));*/
-
     }
 
-    cycleTotal/=NBIMAGES;
-    cycleTotal/=((nch+1)*(nrh+1));
-    BENCH(printf("Cycles SD = "));
-    BENCH(printf(format, cycleTotal));
+    // -------------- //
+    // -- Results -- //
+    // ------------- //
+    
+    BENCH(printf("Cycles Total Sigma Delta = "));
+    BENCH(printf("%6.2f\n", totalCycles));
+
+    totalCycles = totalCycles / NUMBER_IMAGES;
+    BENCH(printf("Cycles per image Sigma Delta = "));
+    BENCH(printf("%6.2f\n", totalCycles));
+
+    totalCycles = totalCycles / ((nch+1)*(nrh+1));
+    BENCH(printf("Cycles per pixel Sigma Delta = "));
+    BENCH(printf("%6.2f\n", totalCycles));
 
 
+    // ---------- //
+    // -- free -- //
+    // ---------- //
+    free_ui8matrix(It1, nrl, nrh, ncl, nch );
+    free_ui8matrix(Mt1, nrl, nrh, ncl, nch );
+    free_ui8matrix(Vt1, nrl, nrh, ncl, nch );
 
-    free_ui8matrix(Et, nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD );
-    free_ui8matrix(It, nrl, nrh, ncl, nch);
-    free_ui8matrix(Itm1, nrl, nrh, ncl, nch);
-    free_ui8matrix(Vt, nrl, nrh, ncl, nch);
-    free_ui8matrix(Vtm1, nrl, nrh, ncl, nch);
-    free_ui8matrix(Mt, nrl, nrh, ncl, nch);
-    free_ui8matrix(Mtm1, nrl, nrh, ncl, nch);
+    free_ui8matrix(It, nrl, nrh, ncl, nch );
+    free_ui8matrix(Mt, nrl, nrh, ncl, nch );
+    free_ui8matrix(Vt, nrl, nrh, ncl, nch );
+    free_ui8matrix(Et, nrl, nrh, ncl, nch );
 
 }
 
