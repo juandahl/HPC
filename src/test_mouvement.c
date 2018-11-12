@@ -126,7 +126,6 @@ void test_routine_FrameDifference(int threshold)
     // -------------- //
     // -- Results -- //
     // ------------- //
-    
     BENCH(printf("Cycles Total Sigma Delta = "));
     BENCH(printf("%6.2f\n", totalCycles));
 

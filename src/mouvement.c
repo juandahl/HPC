@@ -8,8 +8,8 @@
 #include "nrdef.h"
 #include "nrutil.h"
 
-#define VMIN 1
-#define VMAX 254
+#define VMIN 25
+#define VMAX 255
 
 #define Efond 0
 #define Emouv 255
@@ -99,7 +99,7 @@ void routine_SigmaDelta_step0_initialisation(uint8** It1, uint8 **M, uint8 **V, 
 //Mt = moyenne, vt= variance, Mt1 = Mt-1, Et = result  
 void routine_SigmaDelta_step1(uint8** It, uint8** Mt1, uint8** Mt, uint8** Vt, uint8** Vt1, uint8** Et){
     //Verifier parameters et var locales
-    uint8 Ot;
+    uint8 **Ot = ui8matrix(nrl, nrh, ncl, nch);
 	//steps from 1 to 4 together to avoid repeat the loop
     for(int i = nrl; i <= nrh; i++ )
         for(int j = ncl; j <= nch; j++){
@@ -111,22 +111,30 @@ void routine_SigmaDelta_step1(uint8** It, uint8** Mt1, uint8** Mt, uint8** Vt, u
 	        		Mt[i][j] = Mt1[i][j] - 1;
 	        	else
 	        		Mt[i][j] = Mt1[i][j];
-	        
-	        //step 2
-            Ot = abs(Mt - It);
-         	
-         	//step 3
-         	if ( Vt1 < (int)N*Ot )
-         		Vt = Vt1 + 1;
-         	else
-	         	if ( Vt1 > (int)N*Ot )
-	         		Vt = Vt1 - 1;
-	            else
-	                Vt = Vt1;
-            Vt = maxmin(Vt);
+        }
 
+    for(int i = nrl; i <= nrh; i++ )
+        for(int j = ncl; j <= nch; j++){
+	        //step 2
+            Ot[i][j] = abs(Mt[i][j] - It[i][j]);
+        }
+    for(int i = nrl; i <= nrh; i++ )
+        for(int j = ncl; j <= nch; j++){         	
+         	//step 3
+         	if ( Vt[i][j] < (int)N*Ot[i][j] )
+         		Vt[i][j] = Vt1[i][j] + 1;
+         	else
+	         	if ( Vt[i][j] > (int)N*Ot[i][j] )
+	         		Vt[i][j] = Vt1[i][j] - 1;
+	            else
+	                Vt[i][j] = Vt1[i][j];
+            Vt[i][j] = maxmin(Vt[i][j]);
+        }
+
+    for(int i = nrl; i <= nrh; i++ )
+        for(int j = ncl; j <= nch; j++){
             //step 4
-            if(Ot < Vt)
+            if(Ot[i][j] < Vt[i][j])
                 Et[i][j] = Efond;
             else
                 Et[i][j] = Emouv;
