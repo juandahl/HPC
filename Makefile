@@ -1,41 +1,65 @@
-PROGRAMS = main
-CFLAGS = -Wall -g
-CC = gcc 
-COMPILE = $(CC) $(CFLAGS) -c 
+# -------------- #
+# -- Makefile -- #
+# -------------- #
 
-all: $(PROGRAMS)
 
-main: main.o mouvement.o mouvement_SSE2.o morpho.o morpho_SSE2.o test_mouvement.o test_mouvement_SSE2.o test_morpho.o test_morpho_SSE2.o
-	$(CC) -o main main.o mouvement.o mouvement_SSE2.o morpho.o morpho_SSE2.o test_mouvement.o test_mouvement_SSE2.o test_morpho.o test_morpho_SSE2.o -L/usr/lib/x86_64-Linux-gnu/
+# -- Lile list ----------
+FILE = main.c mouvement.c nrutil.c test_mouvement.c
 
-mouvement.o: mouvement.c nrutil.h nrdef.h
-	$(COMPILE) mouvement.c 
+# -- Paths ----------
+SRC_PATH = src
+OBJ_PATH = obj
+EXE_PATH = exe
+INC_PATH = include
 
-main.o: main.c
-	$(COMPILE) main.c
+# -- OS ----------
+#OS = MACH_OSX
+OS = LINUX
 
-mouvement_SSE2.o: mouvement_SSE2.c
-	$(COMPILE) mouvement_SSE2.c
+# -- Config ----------
+# if CONFIG = CLI  (Command Line Interface, no Apple Framework)
+CONFIG = CLI
 
-morpho.o: morpho.c  
-	$(COMPILE) morpho.c
+# -- Macros ----------
+CC = gcc
+AR = ar -rc
 
-morpho_SSE2.o: morpho_SSE2.c
-	$(COMPILE) morpho_SSE2.c
+# -- Flags ----------
+C_DEBUG_FLAGS = -O0
+C_CC_FLAGS = -std=c99 -DNOALIAS -DALIGNED
+C_OPTIMISATION_FLAGS = -O3 -fstrict-aliasing
 
-test_mouvement.o: test_mouvement.c 
-	$(COMPILE) test_mouvement.c
+#C_ARCH_FLAGS = -xSSE4.2
+C_ARCH_FLAGS =
 
-test_mouvement_SSE2.o: test_mouvement_SSE2.c 
-	$(COMPILE) test_mouvement_SSE2.c
+C_OS_FLAGS = -D$(OS)
+C_CONFIG_FLAGS = -D$(CONFIG)
+C_INC_FLAGS = -I$(INC_PATH)
 
-test_morpho.o: test_morpho.c
-	$(COMPILE) test_morpho.c
+CFLAGS =  $(C_CC_FLAGS) $(C_DEBUG_FLAGS)        $(C_ARCH_FLAGS) $(C_OS_FLAGS) $(C_CONFIG_FLAGS) $(C_INC_FLAGS) $(LIB_INC_PATH) 
+CFLAGS = $(C_CC_FLAGS) $(C_OPTIMISATION_FLAGS) $(C_ARCH_FLAGS) $(C_OS_FLAGS) $(C_CONFIG_FLAGS) $(C_INC_FLAGS) $(LIB_INC_PATH)
+LDFLAGS = $(C_CC_FLAGS) $(C_OPTIMISATION_FLAGS) $(C_ARCH_FLAGS) $(C_OS_FLAGS) $(C_CONFIG_FLAGS) $(C_INC_FLAGS) $(LIB_LIB_PATH)
 
-test_morpho_SSE2.o: test_morpho_SSE2.c
-	$(COMPILE) test_morpho_SSE2.c
+# -- Final product ----------
+PRODUCT   = hpc
+
+# -- src and obj List ----------
+SRC = $(addprefix ${SRC_PATH}/, $(FILE))
+OBJ = $(addprefix ${OBJ_PATH}/, $(addsuffix .o, $(basename $(FILE))))
+
+# -- Base rules ----------
+$(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+   
+#-----Main rule ----------
+$(EXE_PATH)/$(PRODUCT): $(OBJ)
+	$(CC) -o $@ $^ $(LDFLAGS) $(OPTFLAGS) $(CFG) $(INC) $(LIB) -lm
+
+# -- Other stuff ----------
+depend:
+	makedepend $(CFLAGS) -Y $(SRC)
 
 clean:
-	rm -f $(PROGRAMS) *.o
+	rm -f $(OBJ)
+	rm -f ${LIB_PATH}/${PRODUCT}
 
-.PHONY: all clean
