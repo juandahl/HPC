@@ -63,7 +63,6 @@ void test_routine_sigmaDelta()
     // -------------- //
     // -- Results -- //
     // ------------- //
-    
     BENCH(printf("Cycles Total Sigma Delta = "));
     BENCH(printf("%6.2f\n", totalCycles));
 
