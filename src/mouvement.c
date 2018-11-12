@@ -7,6 +7,7 @@
 
 #include "nrdef.h"
 #include "nrutil.h"
+#include "mouvement.h"
 
 #define VMIN 1
 #define VMAX 254
@@ -69,7 +70,7 @@ int maxmin(uint8 ** Vt)
         return VMIN;
 }
 
-void routine_SigmaDelta_step0_inicialisation(uint8** It1, uint8 **M, uint8 **V, int rawl, int rawh, int coll, int colh )
+void routine_SigmaDelta_step0_initialisation(uint8** It1, uint8 **M, uint8 **V, int rawl, int rawh, int coll, int colh )
 {
     nrl = rawl;
     nrh = rawh;

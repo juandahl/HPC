@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "nrutil.h"
 #include "nrdef.h"
+#include "nrutil.h"
 #include "mymacro.h"
 
-#include "mouvement.c"
+#include "mouvement.h"
+#include "test_mouvement.h"
 
 #define NUMBER_IMAGES 300
 
@@ -40,7 +41,7 @@ void test_routine_sigmaDelta()
     // ------------ //
     // -- calcul -- //
     // ------------ //
-    routine_SigmaDelta_step0_inicialisation(It1, Mt1, Vt1, nrl, nrh, ncl, nch );
+void routine_SigmaDelta_step0_inicialisation(It1, Mt1, Vt1, nrl, nrh, ncl, nch );
 
     for(int i = 1; i <= NUMBER_IMAGES; i++)
     {

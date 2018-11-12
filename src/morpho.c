@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "include/nrdef.h"
-#include "include/vnrutil.h"
-#include "./include/nrutil.h"
+#include "nrdef.h"
+#include "vnrutil.h"
+#include "nrutil.h"
+#include "morpho.h"
 
 void routine_dilatation3x3(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
 {
