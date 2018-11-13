@@ -3,14 +3,10 @@
 #include <stdlib.h>
 
 #include "nrdef.h"
-#include "vnrutil.h"
-<<<<<<< HEAD
 #include "nrutil.h"
-#include "morpho.h"
-=======
->>>>>>> 839c898635d44d5674d759ae2968f254c1dee978
+#include "mymacro.h"
 
-void routine_dilatation3x3(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_dilatation3x3(uint8** X,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
 	//Pour des images binaires, la dilatation consiste à calculer un OR sur le voisinage B dans l’image source
 	// et à l’écrire dans l’image destination. Inversement l’érosion consiste à calculer un AND sur le voisinage.
@@ -21,7 +17,7 @@ void routine_dilatation3x3(uint8** X,uint8** B, int nrl, int ncl, int nrh, int n
         	//it is inicialize in 0 because it is an Or
         	result = 0;
     	    for(int k=j-1; k<=j+1; k++)
-		        for(int l=i-1; l<=i+1; k++)
+		        for(int l=i-1; l<=i+1; l++)
 		        	result = result | X[i][j];
 
             B[i][j] = result;
@@ -30,7 +26,7 @@ void routine_dilatation3x3(uint8** X,uint8** B, int nrl, int ncl, int nrh, int n
 
 
 //existe deux opérations de base : la dilatation de X notée  B(X) et l’érosion de X noté B(X).
-void routine_erosion3x3(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_erosion3x3(uint8** X,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
     uint8 result;
     for( int i = nrl; i <= nrh; i++ )
@@ -39,26 +35,26 @@ void routine_erosion3x3(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
         	//it is inicialize with 1 because it is an And
         	result = 255;
     	    for( int k = i-1; k <= i+1; k++ )
-		        for(int l = j-1; l <= j+1; k++)
+		        for(int l = j-1; l <= j+1; l++)
 		        	result = result & X[i][j];
 		        
             B[i][j] = result;
         }
 }
 
-void routine_fermeture3x3(uint8** A,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_fermeture3x3(uint8** A,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
     routine_dilatation3x3(A, B, nrl, ncl, nrh, nch);
     routine_erosion3x3(A, B, nrl, ncl, nrh, nch);
 }
 
-void routine_ouverture3x3(uint8** A,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_ouverture3x3(uint8** A,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
     routine_erosion3x3(A, B, nrl, ncl, nrh, nch);
     routine_dilatation3x3(A, B, nrl, ncl, nrh, nch);
 }
 
-void routine_dilatation5x5(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_dilatation5x5(uint8** X,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
 	//Pour des images binaires, la dilatation consiste à calculer un OR sur le voisinage B dans l’image source
 	// et à l’écrire dans l’image destination. Inversement l’érosion consiste à calculer un AND sur le voisinage.
@@ -68,8 +64,8 @@ void routine_dilatation5x5(uint8** X,uint8** B, int nrl, int ncl, int nrh, int n
         {
         	//it is inicialize in 0 because it is an Or
         	result = 0;
-    	    for(int k=j-1; k<=j+1; k++)
-		        for(int l=i-1; l<=i+1; k++)
+    	    for(int k=j-2; k<=j+2; k++)
+		        for(int l=i-2; l<=i+2; l++)
 		        	result = result | X[i][j];
 
             B[i][j] = result;
@@ -78,7 +74,7 @@ void routine_dilatation5x5(uint8** X,uint8** B, int nrl, int ncl, int nrh, int n
 
 
 //existe deux opérations de base : la dilatation de X notée  B(X) et l’érosion de X noté B(X).
-void routine_erosion5x5(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_erosion5x5(uint8** X,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
     uint8 result;
     for( int i = nrl; i <= nrh; i++ )
@@ -86,21 +82,21 @@ void routine_erosion5x5(uint8** X,uint8** B, int nrl, int ncl, int nrh, int nch)
         {
         	//it is inicialize with 1 because it is an And
         	result = 255;
-    	    for( int k = i-1; k <= i+1; k++ )
-		        for(int l = j-1; l <= j+1; k++)
+    	    for( int k = i-2; k <= i+2; k++ )
+		        for(int l = j-2; l <= j+2; l++)
 		        	result = result & X[i][j];
 		        
             B[i][j] = result;
         }
 }
 
-void routine_fermeture5x5(uint8** A,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_fermeture5x5(uint8** A,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
     routine_dilatation5x5(A, B, nrl, ncl, nrh, nch);
     routine_erosion5x5(A, B, nrl, ncl, nrh, nch);
 }
 
-void routine_ouverture5x5(uint8** A,uint8** B, int nrl, int ncl, int nrh, int nch)
+void routine_ouverture5x5(uint8** A, uint8** B, long nrl, long ncl, long nrh, long nch)
 {
     routine_erosion5x5(A, B, nrl, ncl, nrh, nch);
     routine_dilatation5x5(A, B, nrl, ncl, nrh, nch);

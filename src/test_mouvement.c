@@ -39,7 +39,7 @@ void test_routine_FrameDifference(int threshold)
     for(int i = 1; i <= NUMBER_IMAGES; i++)
     {
         sprintf(imagePath, "hall/hall000%03d.pgm", i);
-	It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
+	    It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
         //MLoadPGM_ui8matrix(imagePath, nrl, nrh, ncl, nch, It);
         CHRONO(routine_FrameDifference(It, Itm1, Et, nrl, nrh, ncl, nch, threshold), numcycles);
         totalCycle+=numcycles;
@@ -54,10 +54,14 @@ void test_routine_FrameDifference(int threshold)
     // -------------- //
     // -- Results -- //
     // ------------- //
-    totalCycle /= NUMBER_IMAGES;
-    totalCycle /= ((nch+1)*(nrh+1));
-    BENCH(printf("Cycles FD = "));
-    BENCH(printf(format, totalCycle));
+    BENCH(printf("Cycles Total Sigma Delta = "));
+    BENCH(printf("%6.2f\n", numcycles));
+
+    BENCH(printf("Cycles per image Sigma Delta = "));
+    BENCH(printf("%6.2f\n", numcycles / NUMBER_IMAGES));
+
+    BENCH(printf("Cycles per pixel Sigma Delta = "));
+    BENCH(printf("%6.2f\n", numcycles / ((nch+1)*(nrh+1))));
 
 
     // ---------- //
@@ -77,6 +81,15 @@ void test_routine_sigmaDelta()
     puts("-----------------------------");
 
     //Inicialization variables
+    //cycles variables
+    double cycles;
+
+    char *format = "%6.2f \n";
+    double cycleTotal = 0;
+    int iter, niter = 2;
+    int run, nrun = 5;
+    double t0, t1, dt, tmin, t;
+
     char imagePath[50];
     char outputPath[50];
     long nrl, nrh, ncl, nch; // variables needed to load images
@@ -99,8 +112,9 @@ void test_routine_sigmaDelta()
     // -- calcul -- //
     // ------------ //
 
-    routine_SigmaDelta_step0_initialisation(It1, Mt1, Vt1, nrl, nrh, ncl, nch );
-    printf("%s%s\n","valor: ", imagePath);
+    CHRONO( routine_SigmaDelta_step0_initialisation(It1, Mt1, Vt1, nrl, nrh, ncl, nch), cycles);
+    totalCycles = totalCycles + numCycles;
+
 
     for(int i = 1; i <= NUMBER_IMAGES; i++)
     {
@@ -108,11 +122,8 @@ void test_routine_sigmaDelta()
         sprintf(imagePath, "hall/hall000%03d.pgm", i );
 
         It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
-
-//        MLoadPGM_ui8matrix(imagePath, nrl, nrh, ncl, nch, It); //Load the new image
-
-        
-        CHRONO(routine_SigmaDelta_step1(It, Mt1, Mt, Vt, Vt1, Et), numCycles);
+    
+        CHRONO(routine_SigmaDelta_step1(It, Mt1, Mt, Vt, Vt1, Et), cycles);
         totalCycles = totalCycles + numCycles;
         
         sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i);
@@ -128,15 +139,15 @@ void test_routine_sigmaDelta()
     // -- Results -- //
     // ------------- //
     BENCH(printf("Cycles Total Sigma Delta = "));
-    BENCH(printf("%6.2f\n", totalCycles));
+    BENCH(printf("%6.2f\n", cycles));
 
-    totalCycles = totalCycles / NUMBER_IMAGES;
+    totalCycles = cycles / NUMBER_IMAGES;
     BENCH(printf("Cycles per image Sigma Delta = "));
-    BENCH(printf("%6.2f\n", totalCycles));
+    BENCH(printf("%6.2f\n", cycles / NUMBER_IMAGES));
 
-    totalCycles = totalCycles / ((nch+1)*(nrh+1));
+    totalCycles = cycles / ((nch+1)*(nrh+1));
     BENCH(printf("Cycles per pixel Sigma Delta = "));
-    BENCH(printf("%6.2f\n", totalCycles));
+    BENCH(printf("%6.2f\n", cycles / ((nch+1)*(nrh+1))));
 
 
     // ---------- //
