@@ -4,7 +4,7 @@
 
 
 # -- Lile list ----------
-FILE = main.c nrutil.c mouvement.c test_mouvement.c morpho.c test_morpho.c ROC.c mouvement_SSE2.c test_mouvement_SSE2.c
+FILE = main.c nrutil.c mouvement.c test_mouvement.c morpho.c test_morpho.c ROC.c 
 
 # -- Paths ----------
 SRC_PATH = src
@@ -52,7 +52,7 @@ $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
    
 #-----Main rule ----------
-$(EXE_PATH)/$(PRODUCT): $(OBJ)
+$(PRODUCT): $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS) $(OPTFLAGS) $(CFG) $(INC) $(LIB) -lm
 
 # -- Other stuff ----------

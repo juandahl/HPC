@@ -62,8 +62,6 @@ int maxmin(uint8 ** Vt)
 
 void routine_SigmaDelta_step0_initialisation(uint8** It1, uint8 **M, uint8 **V, long rawl, long rawh, long coll, long colh )
 {
-
-
     nrl = rawl;
     nrh = rawh;
     ncl = coll;

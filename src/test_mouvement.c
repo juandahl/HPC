@@ -1,14 +1,13 @@
-#define NUMBER_IMAGES 299
-#define BORD 2
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "nrdef.h"
+
 #include "nrutil.h"
 #include "mymacro.h"
-#include "mouvement.h"
-#include "test_mouvement.h"
 
+#define NUMBER_IMAGES 299
+#define BORD 2
 
 void test_routine_FrameDifference(int threshold)
 {

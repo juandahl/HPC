@@ -25,8 +25,6 @@ int main(int argc, char *argv[])
 #include "nrutil.h"
 #include "mymacro.h"
 
-#include "test_morpho.c"
-#include "morpho.c"
 
 #define ENABLE_BENCHMARK 1
 
