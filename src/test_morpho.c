@@ -54,7 +54,7 @@ void test_routine_FrameDif_fermeture3x3(int threshold)
         CHRONO( routine_fermeture3x3(Et, B, nrl, ncl, nrh, nch), numCycles);
         totalCycles = totalCycles + numCycles;
         
-        sprintf(outputPath,"fermeture3x3/hall000%03d.pgm",i);
+        sprintf(outputPath,"FrameDifference/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);        
     }
 
@@ -70,6 +70,7 @@ void test_routine_FrameDif_fermeture3x3(int threshold)
     BENCH(printf("Cycles per pixel fermeture3x3 = "));
     BENCH(printf("%6.2f\n", totalCycles / ((nch+1)*(nrh+1))));
 
+    compare_with_ground_truth("FrameDifference");
 
     // ---------- //
     // -- free -- //
@@ -128,7 +129,7 @@ void test_routine_FrameDif_ouverture3x3(int threshold)
         CHRONO( routine_ouverture3x3(Et, B, nrl, ncl, nrh, nch), numCycles);
         totalCycles = totalCycles + numCycles;
         
-        sprintf(outputPath,"fermeture3x3/hall000%03d.pgm",i);
+        sprintf(outputPath,"FrameDifference/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);        
     }
 
@@ -144,6 +145,7 @@ void test_routine_FrameDif_ouverture3x3(int threshold)
     BENCH(printf("Cycles per pixel ouverture3x3 = "));
     BENCH(printf("%6.2f\n", totalCycles / ((nch+1)*(nrh+1))));
 
+    compare_with_ground_truth("FrameDifference");
 
     // ---------- //
     // -- free -- //
@@ -202,7 +204,7 @@ void test_routine_FrameDif_fermeture5x5(int threshold)
         CHRONO( routine_fermeture5x5(Et, B, nrl, ncl, nrh, nch), numCycles);
         totalCycles = totalCycles + numCycles;
         
-        sprintf(outputPath,"fermeture5x5/hall000%03d.pgm",i);
+        sprintf(outputPath,"FrameDifference/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);        
     }
 
@@ -218,6 +220,7 @@ void test_routine_FrameDif_fermeture5x5(int threshold)
     BENCH(printf("Cycles per pixel fermeture5x5 = "));
     BENCH(printf("%6.2f\n", totalCycles / ((nch+1)*(nrh+1))));
 
+    compare_with_ground_truth("FrameDifference");
 
     // ---------- //
     // -- free -- //
@@ -275,7 +278,7 @@ void test_routine_FrameDif_ouverture5x5(int threshold)
         CHRONO( routine_ouverture5x5(Et, B, nrl, ncl, nrh, nch), numCycles);
         totalCycles = totalCycles + numCycles;
         
-        sprintf(outputPath,"fermeture5x5/hall000%03d.pgm",i);
+        sprintf(outputPath,"FrameDifference/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);        
     }
 
@@ -291,6 +294,7 @@ void test_routine_FrameDif_ouverture5x5(int threshold)
     BENCH(printf("Cycles per pixel ouverture5x5 = "));
     BENCH(printf("%6.2f\n", totalCycles / ((nch+1)*(nrh+1))));
 
+    compare_with_ground_truth("FrameDifference");
 
     // ---------- //
     // -- free -- //
@@ -360,7 +364,7 @@ void test_routine_SD_fermeture3x3()
         CHRONO( routine_fermeture3x3(Et, B, nrl, ncl, nrh, nch), cycles);
         cycleTotal = cycleTotal + cycles;
 
-        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i);
+        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);
         
         //update state of matrix
@@ -380,6 +384,8 @@ void test_routine_SD_fermeture3x3()
 
     BENCH(printf("Cycles per pixel Sigma Delta = "));
     BENCH(printf("%6.2f\n", cycleTotal / ((nch+1)*(nrh+1))));
+
+    compare_with_ground_truth("SigmaDelta");
 
 
     // ---------- //
@@ -454,7 +460,7 @@ void test_routine_SD_fermeture5x5()
         CHRONO( routine_fermeture5x5(Et, B, nrl, ncl, nrh, nch), cycles);
         cycleTotal = cycleTotal + cycles;
 
-        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i);
+        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);
         
         //update state of matrix
@@ -474,6 +480,8 @@ void test_routine_SD_fermeture5x5()
 
     BENCH(printf("Cycles per pixel Sigma Delta = "));
     BENCH(printf("%6.2f\n", cycleTotal / ((nch+1)*(nrh+1))));
+
+    compare_with_ground_truth("SigmaDelta");
 
 
     // ---------- //
@@ -547,7 +555,7 @@ void test_routine_SD_ouverture3x3()
         CHRONO( routine_ouverture3x3(Et, B, nrl, ncl, nrh, nch), cycles);
         cycleTotal = cycleTotal + cycles;
 
-        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i);
+        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);
         
         //update state of matrix
@@ -568,6 +576,7 @@ void test_routine_SD_ouverture3x3()
     BENCH(printf("Cycles per pixel Sigma Delta = "));
     BENCH(printf("%6.2f\n", cycleTotal / ((nch+1)*(nrh+1))));
 
+    compare_with_ground_truth("SigmaDelta");
 
     // ---------- //
     // -- free -- //
@@ -640,7 +649,7 @@ void test_routine_SD_ouverture5x5()
         CHRONO( routine_ouverture5x5(Et, B, nrl, ncl, nrh, nch), cycles);
         cycleTotal = cycleTotal + cycles;
 
-        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i);
+        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i-1);
         SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);
         
         //update state of matrix
@@ -661,6 +670,7 @@ void test_routine_SD_ouverture5x5()
     BENCH(printf("Cycles per pixel Sigma Delta = "));
     BENCH(printf("%6.2f\n", cycleTotal / ((nch+1)*(nrh+1))));
 
+    compare_with_ground_truth("SigmaDelta");
 
     // ---------- //
     // -- free -- //
@@ -675,5 +685,5 @@ void test_routine_SD_ouverture5x5()
     free_ui8matrix(Et, nrl-BORD, nrh-BORD, ncl-BORD, nch-BORD );
     free_ui8matrix(B, nrl-BORD, nrh-BORD, ncl-BORD, nch-BORD );
  
- 
+
 }
