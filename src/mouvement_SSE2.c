@@ -1,36 +1,17 @@
-//les implémentation SSE2
-
+//les implémentations SSE2
 
 
 #include "mouvement_SSE2.h"
 
 
 
-
-
-//------------------//
-//------MACROS------//
-//------------------//
-#define VMIN 25
-#define VMAX 255
-
-
-/*//MAXMIN
-#define MIN(Vt) ((Vt > VMIN) ? (Vt) : (VMIN))
-#define MAX(Vt) (Vt > VMAX) ? (Vt = VMAX)
-#define MAXMIN(Vt) MAX(Vt); MIN(Vt)*/
-
-
-
 void routine_FrameDifference_SSE2(vuint8 **I1, vuint8 **I0, vuint8 **Et, long rawl, long rawh, long coll, long colh, vuint8 threshold)
 {
  
-    vuint8 tmpI1;
-    vuint8 tmpI0;
-    vuint8 tmpOt;
-    vuint8 whitePixel = init_vuint8(255);
-    vuint8 tmpEt;
-    vuint8 maxSChar = init_vuint8(128);
+    vuint8 tmpI1, tmpI0, tmpOt, tmpEt;
+    vuint8 signe = init_vuint8(128);
+    vuint8 Emouv = init_vuint8(255); //pixel blanc qui correspond à un mouvement
+
     for(int i = rawl; i <= rawh; i++ )
     {
         for(int j = coll; j <= colh; j++)
@@ -45,9 +26,9 @@ void routine_FrameDifference_SSE2(vuint8 **I1, vuint8 **I0, vuint8 **Et, long ra
             tmpOt = _mm_sub_epi8(max, min);
 
             //Si Ot < 0, on a 255, sinon 0 donc on inverse pour avoir 255 sur Et quand Ot>=0 et 0 pour Ot < 0
-            vuint8 result = _mm_cmplt_epi8(_mm_sub_epi8(tmpOt, maxSChar), _mm_sub_epi8(threshold, maxSChar)); //= 1 si < threshold sinon = 0
+            vuint8 result = _mm_cmplt_epi8(_mm_sub_epi8(tmpOt, signe), _mm_sub_epi8(threshold, signe)); //= 1 si < threshold sinon = 0
 
-            result = _mm_andnot_si128(result, whitePixel);
+            result = _mm_andnot_si128(result, Emouv);
             _mm_store_si128(&Et[i][j], result);
 
         }
@@ -58,9 +39,7 @@ void routine_FrameDifference_SSE2(vuint8 **I1, vuint8 **I0, vuint8 **Et, long ra
 
 void routine_SigmaDelta_step0_SSE2(vuint8** It1, vuint8 **M, vuint8 **V, long rawl, long rawh, long coll, long colh)
 {
-    vuint8 tmpIt1;
-    vuint8 tmpM;
-    vuint8 tmpV;
+    vuint8 tmpIt1, tmpM, tmpV;
     vuint8 ecartTypeInit = init_vuint8(VMIN);
 
     for(int i = rawl; i <= rawh; i++ )
@@ -79,19 +58,16 @@ void routine_SigmaDelta_step0_SSE2(vuint8** It1, vuint8 **M, vuint8 **V, long ra
 
 void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vuint8** Mt0, vuint8** Mt1, vuint8 **Et, vuint8 **V, long rawl, long rawh, long coll, long colh)
 {
-    vuint8 tmpMt0, tmpVt0;
-    vuint8 tmpIt1, tmpMt, tmpVt1;
-    vuint8 tmpOt;
-    vuint8 whitePixel = init_vuint8(255);
-    vuint8 tmpEt;
+    vuint8 tmpMt0, tmpVt0, tmpIt1, tmpMt, tmpVt1, tmpOt, tmpEt;
     vuint8 un = init_vuint8(1);
-    vuint8 VMAXSIMD = init_vuint8(VMAX);
-    vuint8 VMINSIMD = init_vuint8(VMIN);
-    vuint8 maxSChar = init_vuint8(128);
+    vuint8 Vmax = init_vuint8(VMAX);
+    vuint8 Vmin = init_vuint8(VMIN);
     vuint8 Mt0Add1, Mt0Sub1;
     vuint8 NTimesOt;
     vuint8 result;
-    vuint8 Vt0Add1,Vt0Sub1;
+    vuint8 Vt0Add1, Vt0Sub1;
+    vuint8 signe = init_vuint8(128);
+    vuint8 Emouv = init_vuint8(255); //pixel blanc qui correspond à un mouvement
 
     for(int i = rawl; i <= rawh; i++ )
     {
@@ -106,11 +82,11 @@ void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vu
             Mt0Sub1 = _mm_sub_epi8(tmpMt0, un);
 
 	    //Si Mt0 < It
-            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpMt0, maxSChar), _mm_sub_epi8(tmpIt1, maxSChar));
+            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpMt0, signe), _mm_sub_epi8(tmpIt1, signe));
             tmpMt1 = _mm_or_si128(_mm_and_si128(result, Mt0Add1), _mm_andnot_si128(result, tmpMt0)); 
 
 	    //Si Mt0 > It
-            result = _mm_cmpgt_epi8(_mm_sub_epi8(tmpMt0, maxSChar), _mm_sub_epi8(tmpIt1, maxSChar));
+            result = _mm_cmpgt_epi8(_mm_sub_epi8(tmpMt0, signe), _mm_sub_epi8(tmpIt1, signe));
             tmpMt1 = _mm_or_si128(_mm_and_si128(result, Mt0Sub1), _mm_andnot_si128(result, tmpMt1)); 
 
 
@@ -131,23 +107,23 @@ void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vu
             }
 
 	    // si Vt-1 < N*Ot
-            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpVt0, maxSChar), _mm_sub_epi8(NTimesOt, maxSChar));
+            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpVt0, signe), _mm_sub_epi8(NTimesOt, signe));
             tmpVt1 = _mm_or_si128(_mm_and_si128(result, Vt0Add1), _mm_andnot_si128(result, tmpVt0)); 
 
 	    //si Vt-1 > N*Ot
-            result = _mm_cmpgt_epi8(_mm_sub_epi8(tmpVt0, maxSChar), _mm_sub_epi8(NTimesOt, maxSChar));
+            result = _mm_cmpgt_epi8(_mm_sub_epi8(tmpVt0, signe), _mm_sub_epi8(NTimesOt, signe));
             tmpVt1 = _mm_or_si128(_mm_and_si128(result, Vt0Sub1), _mm_andnot_si128(result, tmpVt1));
 
 	    //sinon
-            tmpVt1 = _mm_max_epu8(_mm_min_epu8(tmpVt1, VMAXSIMD), VMINSIMD);
+            tmpVt1 = _mm_max_epu8(_mm_min_epu8(tmpVt1, Vmax), Vmin);
 
 
             //Step 4
 	    //si Ot < Vt
-            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpOt,maxSChar), _mm_sub_epi8(tmpVt1,maxSChar));
+            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpOt,signe), _mm_sub_epi8(tmpVt1,signe));
 
 	    //Inverse les 255 et 0 pour avoir la bonne couleur de pixel
-            vuint8 destination = _mm_andnot_si128(result, whitePixel);
+            vuint8 destination = _mm_andnot_si128(result, Emouv);
 
             _mm_store_si128(&Et[i][j], destination);
             _mm_store_si128(&Vt1[i][j], tmpVt1);
