@@ -1,23 +1,3 @@
-/*
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "nrdef.h"
-#include "nrutil.h"
-#include "mymacro.h"
-#include "test_mouvement.h"
-
-int main(int argc, char *argv[])
-{
-    test_routine_FrameDifference(21);
-    test_routine_sigmaDelta();
-    return 0;
-}
-*/
-/* -------------- */
-/* --- main.c --- */
-/* -------------- */
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -25,6 +5,7 @@ int main(int argc, char *argv[])
 #include "nrutil.h"
 #include "mymacro.h"
 
+#include "bench_morpho.c"
 
 #define ENABLE_BENCHMARK 1
 
@@ -49,14 +30,21 @@ int main(void)
 // -----------
 {
     info();
-    test_routine_FrameDifference(48);
+
+//TEST PERFORMANCE FRAME DIFFERENCE
+/*
+    test_routine_FrameDifference(10);
+    test_routine_FrameDifference(20);
+    test_routine_FrameDifference(30);
+    test_routine_FrameDifference(40);
     test_routine_FrameDifference(50);
-    test_routine_FrameDifference(52);
-    test_routine_FrameDifference(54);
-    test_routine_FrameDifference(56);
-    test_routine_FrameDifference(58);
-
-
+    test_routine_FrameDifference(60);
+*/
+/*
+    test_routine_FrameDifference(60);
+    test_routine_FrameDifference_thread(60);
+    test_routine_sigmaDelta();
+*/ 
 /*
     test_routine_FrameDifference(20);
     test_routine_sigmaDelta();
@@ -71,3 +59,5 @@ int main(void)
 */
     return 0;    
 }
+  
+  

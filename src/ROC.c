@@ -56,11 +56,15 @@ void compare_with_ground_truth(char path[40])
     }
 
     //print results
-    printf("ROC = \n%d %d\n%d %d\n",roc[0][0], roc[0][1], roc[1][0], roc[1][1]);
-    printf("ROC average = \n%f %f\n%f %f\n",(double)roc[0][0]/pixelTotal, (double)roc[0][1]/pixelTotal, (double)roc[1][0]/pixelTotal, (double)roc[1][1]/pixelTotal);
+    printf("ROC = \n%d\t%d\n%d\t%d\n\n",roc[0][0], roc[0][1], roc[1][0], roc[1][1]);
+    printf("ROC average = \n%f\t%f\n%f\t%f\n\n",(double)roc[0][0]/pixelTotal, (double)roc[0][1]/pixelTotal, (double)roc[1][0]/pixelTotal, (double)roc[1][1]/pixelTotal);
+
+    //accuracy
+    printf("accuracy = %f \n",((double)roc[0][0] + (double)roc[1][1]) /pixelTotal);
+    printf("precission = %f \n\n", (double)roc[0][0] / ((double)roc[0][0] + (double)roc[1][0]) );
 
 //  test if the add result is 1
-//    printf("ROC add = %f \n",(double)roc[0][0]/pixelTotal + (double)roc[0][1]/pixelTotal + (double)roc[1][0]/pixelTotal + (double)roc[1][1]/pixelTotal);
+    printf("ROC add = %f \n",(double)roc[0][0]/pixelTotal + (double)roc[0][1]/pixelTotal + (double)roc[1][0]/pixelTotal + (double)roc[1][1]/pixelTotal);
 
     //free memory
     free_ui8matrix(groundTruth, nrl, nrh, ncl, nch);

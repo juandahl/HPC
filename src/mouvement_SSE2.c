@@ -1,8 +1,10 @@
 //les implémentations SSE2
-
-
+//test_mouvement_SSE2.c
+#include <stdio.h>
+#include <stdlib.h>
+#include "vnrdef.h"
+#include "vnrutil.h"
 #include "mouvement_SSE2.h"
-
 
 
 void routine_FrameDifference_SSE2(vuint8 **I1, vuint8 **I0, vuint8 **Et, long rawl, long rawh, long coll, long colh, vuint8 threshold)
