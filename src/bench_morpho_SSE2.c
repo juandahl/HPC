@@ -1,23 +1,208 @@
 //test_morpho.c
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "vnrdef.h"
+#include "vnrutil.h"
 #include "nrdef.h"
-
 #include "nrutil.h"
+#include "mouvement_SSE2.h"
 #include "mymacro.h"
+#include "bench_mouvement_SSE2.h"
 
-#include "bench_morpho.h"
+#include "morpho_SSE2.h"
+
+#include "mouvement_SSE2.h"
+#include "bench_morpho_SSE2.h"
 
 #define NUMBER_IMAGES 299
 #define BORD 2
 
-//unit test for frame difference
-void test_routine_FrameDif_fermeture3x3(int threshold)
+
+
+
+void test_routine_FrameDif_fermeture3x3_SSE2(int threshold)
 {
-    puts("----------------------------------------");
-    puts("-- test_routine_FrameDif_fermeture3x3 --");
-    puts("----------------------------------------");
+    puts("---------------------------------------");
+    puts("-- test_routine_FrameDifference_SSE2 --");
+    puts("---------------------------------------");
+    //initialisation des variables
+    char imagePath[50];
+    char outputPath[50];
+    char initialImagePath[50] = "hall/hall000000.pgm";
+
+    double numcycles, totalCycle = 0;
+    char *format = "%6.2f \n";
+    int iter, niter = 2;
+    int run, nrun = 5;
+    double t0, t1, dt, tmin, t;
+    long nrl, nrh, ncl, nch; // variables needed to load images
+    vuint8 vthreshold = init_vuint8(threshold);
+
+    // ------------ //
+    // -- calcul -- //
+    // ------------ //
+
+    //load image ui8 format
+    uint8 **I0 =  LoadPGM_ui8matrix(initialImagePath, &nrl, &nrh, &ncl, &nch);
+    uint8 **It = ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Et = ui8matrix(nrl, nrh, ncl, nch);
+
+    //vector initialization
+    vuint8 ** vI0 = vui8matrix_s(nrl, nrh, ncl, nch); 
+    vuint8 ** vIt = vui8matrix_s(nrl, nrh, ncl, nch); 
+    vuint8 ** vEt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vB = vui8matrix_s(nrl, nrh, ncl, nch);
+
+    // 
+
+    //convert matrix uint8 to vector
+    int vnrl, vnrh, vncl, vnch; 
+    s2v(nrl, nrh, ncl, nch, 16, &vnrl, &vnrh, &vncl, &vnch);
+    getMatrixSIMD(vI0, I0,  vnrl, vnrh, vncl, vnch);
+
+    for(int i = 1; i <= NUMBER_IMAGES; i++)
+    {
+        sprintf(imagePath, "hall/hall000%03d.pgm", i);
+	    It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
+        getMatrixSIMD(vIt, It,  vnrl, vnrh, vncl, vnch);
+
+        CHRONO(routine_FrameDifference_SSE2(vIt, vI0, vEt, vnrl, vnrh, vncl, vnch, vthreshold), numcycles);        
+        totalCycle+=numcycles;
+
+
+        CHRONO(fermeture3x3_SSE2(vEt, vB, vnrl, vnrh, vncl, vnch ), numcycles);        
+        totalCycle+=numcycles;
+
+        //update Its 
+        dup_vui8matrix(vIt, vnrl, vnrh, vncl, vnch, vI0);
+
+        //Save the image
+        sprintf(outputPath, "FrameDifference/hall000%03d.pgm", i-1);
+        getMatrixNum(vB, Et, vnrl, vnrh, vncl, vnch);
+        SavePGM_ui8matrix(Et, nrl, nrh, ncl, nch, outputPath);
+    }
+
+    // -------------- //
+    // -- Results -- //
+    // ------------- //
+    BENCH(printf("Cycles Total FrameDifference = "));
+    BENCH(printf("%6.2f\n", totalCycle));
+
+    BENCH(printf("Cycles per image FrameDifference = "));
+    BENCH(printf("%6.2f\n", totalCycle / NUMBER_IMAGES));
+
+    BENCH(printf("Cycles per pixel FrameDifference = "));
+    BENCH(printf("%6.2f\n", totalCycle / ((nch+1)*(nrh+1))));
+
+
+    compare_with_ground_truth("FrameDifference");
+
+    // ---------- //
+    // -- free -- //
+    // ---------- //
+    free_ui8matrix(I0, nrl, nrh, ncl, nch );
+
+    free_vui8matrix(vI0, vnrl, vnrh, vncl, vnch);
+    free_vui8matrix(vIt, vnrl, vnrh, vncl, vnch);
+    free_vui8matrix(vEt, vnrl, vnrh, vncl, vnch);
+}
+
+
+
+void test_routine_FrameDif_ouverture3x3_SSE2(int threshold)
+{
+    puts("---------------------------------------");
+    puts("-- test_routine_FrameDifference_SSE2 --");
+    puts("---------------------------------------");
+    //initialisation des variables
+    char imagePath[50];
+    char outputPath[50];
+    char initialImagePath[50] = "hall/hall000000.pgm";
+
+    double numcycles, totalCycle = 0;
+    char *format = "%6.2f \n";
+    int iter, niter = 2;
+    int run, nrun = 5;
+    double t0, t1, dt, tmin, t;
+    long nrl, nrh, ncl, nch; // variables needed to load images
+    vuint8 vthreshold = init_vuint8(threshold);
+
+    // ------------ //
+    // -- calcul -- //
+    // ------------ //
+
+    //load image ui8 format
+    uint8 **I0 =  LoadPGM_ui8matrix(initialImagePath, &nrl, &nrh, &ncl, &nch);
+    uint8 **It = ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Et = ui8matrix(nrl, nrh, ncl, nch);
+
+    //vector initialization
+    vuint8 ** vI0 = vui8matrix_s(nrl, nrh, ncl, nch); 
+    vuint8 ** vIt = vui8matrix_s(nrl, nrh, ncl, nch); 
+    vuint8 ** vEt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vB = vui8matrix_s(nrl, nrh, ncl, nch);
+
+    // 
+
+    //convert matrix uint8 to vector
+    int vnrl, vnrh, vncl, vnch; 
+    s2v(nrl, nrh, ncl, nch, 16, &vnrl, &vnrh, &vncl, &vnch);
+    getMatrixSIMD(vI0, I0,  vnrl, vnrh, vncl, vnch);
+
+    for(int i = 1; i <= NUMBER_IMAGES; i++)
+    {
+        sprintf(imagePath, "hall/hall000%03d.pgm", i);
+	    It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
+        getMatrixSIMD(vIt, It,  vnrl, vnrh, vncl, vnch);
+
+        CHRONO(routine_FrameDifference_SSE2(vIt, vI0, vEt, vnrl, vnrh, vncl, vnch, vthreshold), numcycles);        
+        totalCycle+=numcycles;
+
+
+        CHRONO(ouverture3x3_SSE2(vEt, vB, vnrl, vnrh, vncl, vnch ), numcycles);        
+        totalCycle+=numcycles;
+
+        //update Its 
+        dup_vui8matrix(vIt, vnrl, vnrh, vncl, vnch, vI0);
+
+        //Save the image
+        sprintf(outputPath, "FrameDifference/hall000%03d.pgm", i-1);
+        getMatrixNum(vB, Et, vnrl, vnrh, vncl, vnch);
+        SavePGM_ui8matrix(Et, nrl, nrh, ncl, nch, outputPath);
+    }
+
+    // -------------- //
+    // -- Results -- //
+    // ------------- //
+    BENCH(printf("Cycles Total FrameDifference = "));
+    BENCH(printf("%6.2f\n", totalCycle));
+
+    BENCH(printf("Cycles per image FrameDifference = "));
+    BENCH(printf("%6.2f\n", totalCycle / NUMBER_IMAGES));
+
+    BENCH(printf("Cycles per pixel FrameDifference = "));
+    BENCH(printf("%6.2f\n", totalCycle / ((nch+1)*(nrh+1))));
+
+
+    compare_with_ground_truth("FrameDifference");
+
+    // ---------- //
+    // -- free -- //
+    // ---------- //
+    free_ui8matrix(I0, nrl, nrh, ncl, nch );
+
+    free_vui8matrix(vI0, vnrl, vnrh, vncl, vnch);
+    free_vui8matrix(vIt, vnrl, vnrh, vncl, vnch);
+    free_vui8matrix(vEt, vnrl, vnrh, vncl, vnch);
+}
+
+
+
+void test_routine_SD_fermeture3x3_SSE2()
+{
+    puts("----------------------------------");
+    puts("-- test_routine_SigmaDelta_SSE2 --");
+    puts("----------------------------------");
 
     //Inicialization variables
     //cycles variables
@@ -29,61 +214,209 @@ void test_routine_FrameDif_fermeture3x3(int threshold)
     int run, nrun = 5;
     double t0, t1, dt, tmin, t;
 
-    //
-    char imagePath[50] = "hall/hall000000.pgm";
+    char imagePath[50];
     char outputPath[50];
     long nrl, nrh, ncl, nch; // variables needed to load images
-    double numCycles, totalCycles; //cycles counters     
-    totalCycles = 0;
+    double numCycles, totalCycles = 0; //cycles counters 
+    char initialImagePath[50] = "hall/hall000000.pgm"; 
+    
+    //inicial matrix(step 0)
+    uint8** It1 = LoadPGM_ui8matrix(initialImagePath, &nrl, &nrh, &ncl, &nch);
 
-    //inicial matrix
-    uint8 **Itm1 =  LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
+    uint8 **Mt1 =  ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Vt1 =  ui8matrix(nrl, nrh, ncl, nch);
+
+    //initial matrix (step1)
     uint8 **It = ui8matrix(nrl, nrh, ncl, nch);
-    uint8 **Et = ui8matrix(nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD); //output frame_dif
-    uint8 **B = ui8matrix(nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD); //output fermeture
+    uint8 **Et = ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Mt =  ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Vt =  ui8matrix(nrl, nrh, ncl, nch);
+
+    //vector initialization
+    int vnrl, vnrh, vncl, vnch; 
+    s2v(nrl, nrh, ncl, nch, 16, &vnrl, &vnrh, &vncl, &vnch); 
+
+    //inicial matrix(step 0)
+    vuint8** vIt1 = LoadPGM_ui8matrix(initialImagePath, &nrl, &nrh, &ncl, &nch);
+
+    vuint8 ** vMt1 =  vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vVt1 =  vui8matrix_s(nrl, nrh, ncl, nch);
+
+    //initial matrix (step1)
+    vuint8 ** vIt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vEt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vMt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vVt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vB = vui8matrix_s(nrl, nrh, ncl, nch); // fermeture result
+
 
     // ------------ //
     // -- calcul -- //
     // ------------ //
+    getMatrixSIMD(vIt1, It, vnrl, vnrh, vnrl, vnrh);    
+    CHRONO( routine_SigmaDelta_step0_initialisation(vIt1, vMt1, vVt1, vnrl, vnrh, vncl, vnch), cycles);
+    totalCycles = totalCycles + cycles;
+
 
     for(int i = 1; i <= NUMBER_IMAGES; i++)
     {
-        sprintf(imagePath, "hall/hall000%03d.pgm", i );
-        MLoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch, It);
+        sprintf(imagePath, "hall/hall000%03d.pgm", i );        
 
-        //run frame diff
-        CHRONO( routine_FrameDifference(It, Itm1, Et, nrl, nrh, ncl, nch, threshold), numCycles);
-        totalCycles = totalCycles + numCycles;
+        It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
+        getMatrixSIMD(vIt, It, vnrl, vnrh, vncl, vnch );
 
-        //run frame diff with the frame dif output
-        CHRONO( routine_fermeture3x3(Et, B, nrl, ncl, nrh, nch), numCycles);
-        totalCycles = totalCycles + numCycles;
+        CHRONO(routine_SigmaDelta_step1_SSE2(vIt, vVt1, vVt, vMt1, vMt, vEt, vVt, vnrl, vnrh, vncl, vnch), cycles);
+        totalCycles = totalCycles + cycles;
+
+        CHRONO(fermeture3x3_SSE2(vEt, vB,  vnrl, vnrh, vncl, vnch), cycles);
+        totalCycles = totalCycles + cycles;
+
+        getMatrixNum(vB, Et, vnrl, vnrh, vncl, vnch);
+
+        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i-1);
+        SavePGM_ui8matrix(Et, nrl, nrh, ncl, nch, outputPath);
         
-        sprintf(outputPath,"FrameDifference/hall000%03d.pgm",i-1);
-        SavePGM_ui8matrix(B, nrl, nrh, ncl, nch, outputPath);        
+        //update state of matrix
+        dup_vui8matrix(vMt, vnrl, vnrh, vncl, vnch, vMt1);
+        dup_vui8matrix(vVt, vnrl, vnrh, vncl, vnch, vVt1);
+        dup_vui8matrix(vIt, vnrl, vnrh, vncl, vnch, vIt1);
     }
 
     // -------------- //
     // -- Results -- //
     // ------------- //
-    BENCH(printf("Cycles Total fermeture3x3 = "));
+    BENCH(printf("Cycles Total Sigma Delta = "));
     BENCH(printf("%6.2f\n", totalCycles));
 
-    BENCH(printf("Cycles per image fermeture3x3 = "));
+    BENCH(printf("Cycles per image Sigma Delta = "));
     BENCH(printf("%6.2f\n", totalCycles / NUMBER_IMAGES));
 
-    BENCH(printf("Cycles per pixel fermeture3x3 = "));
+    BENCH(printf("Cycles per pixel Sigma Delta = "));
     BENCH(printf("%6.2f\n", totalCycles / ((nch+1)*(nrh+1))));
 
-
-    compare_with_ground_truth("FrameDifference");
+    compare_with_ground_truth("SigmaDelta");
 
     // ---------- //
     // -- free -- //
     // ---------- //
-    free_ui8matrix(Itm1, nrl, nrh, ncl, nch );
-    free_ui8matrix(It, nrl, nrh, ncl, nch );
-    free_ui8matrix(Et, nrl-BORD, nrh-BORD, ncl-BORD, nch-BORD );
-    free_ui8matrix(B, nrl-BORD, nrh-BORD, ncl-BORD, nch-BORD );
+    free_ui8matrix(It1, nrl, nrh, ncl, nch );
+    free_ui8matrix(Mt1, nrl, nrh, ncl, nch );
+    free_ui8matrix(Vt1, nrl, nrh, ncl, nch );
 
+    free_ui8matrix(It, nrl, nrh, ncl, nch );
+    free_ui8matrix(Mt, nrl, nrh, ncl, nch );
+    free_ui8matrix(Vt, nrl, nrh, ncl, nch );
+    free_ui8matrix(Et, nrl, nrh, ncl, nch );
+}
+
+
+void test_routine_SD_ouverture3x3_SSE2()
+{
+    puts("----------------------------------");
+    puts("-- test_routine_SigmaDelta_SSE2 --");
+    puts("----------------------------------");
+
+    //Inicialization variables
+    //cycles variables
+    double cycles;
+
+    char *format = "%6.2f \n";
+    double cycleTotal = 0;
+    int iter, niter = 2;
+    int run, nrun = 5;
+    double t0, t1, dt, tmin, t;
+
+    char imagePath[50];
+    char outputPath[50];
+    long nrl, nrh, ncl, nch; // variables needed to load images
+    double numCycles, totalCycles = 0; //cycles counters 
+    char initialImagePath[50] = "hall/hall000000.pgm"; 
+    
+    //inicial matrix(step 0)
+    uint8** It1 = LoadPGM_ui8matrix(initialImagePath, &nrl, &nrh, &ncl, &nch);
+
+    uint8 **Mt1 =  ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Vt1 =  ui8matrix(nrl, nrh, ncl, nch);
+
+    //initial matrix (step1)
+    uint8 **It = ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Et = ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Mt =  ui8matrix(nrl, nrh, ncl, nch);
+    uint8 **Vt =  ui8matrix(nrl, nrh, ncl, nch);
+
+    //vector initialization
+    int vnrl, vnrh, vncl, vnch; 
+    s2v(nrl, nrh, ncl, nch, 16, &vnrl, &vnrh, &vncl, &vnch); 
+
+    //inicial matrix(step 0)
+    vuint8** vIt1 = LoadPGM_ui8matrix(initialImagePath, &nrl, &nrh, &ncl, &nch);
+
+    vuint8 ** vMt1 =  vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vVt1 =  vui8matrix_s(nrl, nrh, ncl, nch);
+
+    //initial matrix (step1)
+    vuint8 ** vIt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vEt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vMt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vVt = vui8matrix_s(nrl, nrh, ncl, nch);
+    vuint8 ** vB = vui8matrix_s(nrl, nrh, ncl, nch); // fermeture result
+
+
+    // ------------ //
+    // -- calcul -- //
+    // ------------ //
+    getMatrixSIMD(vIt1, It, vnrl, vnrh, vnrl, vnrh);    
+    CHRONO( routine_SigmaDelta_step0_initialisation(vIt1, vMt1, vVt1, vnrl, vnrh, vncl, vnch), cycles);
+    totalCycles = totalCycles + cycles;
+
+
+    for(int i = 1; i <= NUMBER_IMAGES; i++)
+    {
+        sprintf(imagePath, "hall/hall000%03d.pgm", i );        
+
+        It = LoadPGM_ui8matrix(imagePath, &nrl, &nrh, &ncl, &nch);
+        getMatrixSIMD(vIt, It, vnrl, vnrh, vncl, vnch );
+
+        CHRONO(routine_SigmaDelta_step1_SSE2(vIt, vVt1, vVt, vMt1, vMt, vEt, vVt, vnrl, vnrh, vncl, vnch), cycles);
+        totalCycles = totalCycles + cycles;
+
+        CHRONO(ouverture3x3_SSE2(vEt, vB,  vnrl, vnrh, vncl, vnch), cycles);
+        totalCycles = totalCycles + cycles;
+
+        getMatrixNum(vB, Et, vnrl, vnrh, vncl, vnch);
+
+        sprintf(outputPath,"SigmaDelta/hall000%03d.pgm",i-1);
+        SavePGM_ui8matrix(Et, nrl, nrh, ncl, nch, outputPath);
+        
+        //update state of matrix
+        dup_vui8matrix(vMt, vnrl, vnrh, vncl, vnch, vMt1);
+        dup_vui8matrix(vVt, vnrl, vnrh, vncl, vnch, vVt1);
+        dup_vui8matrix(vIt, vnrl, vnrh, vncl, vnch, vIt1);
+    }
+
+    // -------------- //
+    // -- Results -- //
+    // ------------- //
+    BENCH(printf("Cycles Total Sigma Delta = "));
+    BENCH(printf("%6.2f\n", totalCycles));
+
+    BENCH(printf("Cycles per image Sigma Delta = "));
+    BENCH(printf("%6.2f\n", totalCycles / NUMBER_IMAGES));
+
+    BENCH(printf("Cycles per pixel Sigma Delta = "));
+    BENCH(printf("%6.2f\n", totalCycles / ((nch+1)*(nrh+1))));
+
+    compare_with_ground_truth("SigmaDelta");
+
+    // ---------- //
+    // -- free -- //
+    // ---------- //
+    free_ui8matrix(It1, nrl, nrh, ncl, nch );
+    free_ui8matrix(Mt1, nrl, nrh, ncl, nch );
+    free_ui8matrix(Vt1, nrl, nrh, ncl, nch );
+
+    free_ui8matrix(It, nrl, nrh, ncl, nch );
+    free_ui8matrix(Mt, nrl, nrh, ncl, nch );
+    free_ui8matrix(Vt, nrl, nrh, ncl, nch );
+    free_ui8matrix(Et, nrl, nrh, ncl, nch );
 }

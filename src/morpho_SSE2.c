@@ -30,7 +30,7 @@ void dilatation3x3_SSE2(vuint8 **X, vuint8 **B, long nrl, long ncl, long nrh, lo
 	int j = nrh;
 	int i = nrl;
 
-	l1 = (&X[i+0][j]);
+	l1 = _mm_load_si128(&X[i+0][j]);
 	l2 = _mm_load_si128(&X[i+1][j]);
 
 	result1 =  _mm_or_si128(l1,l2);
@@ -287,9 +287,8 @@ void erosion3x3_SSE2(vuint8 **X, vuint8 **B, long nrl,long ncl,long nrh,long nch
 void fermeture3x3_SSE2(vuint8 **A,vuint8 **B,long nrl,long ncl,long nrh,long nch)
 {
 	vuint8 ** X = vui8matrix(nrl, ncl, nrh, nch);
-	dilatation3x3_SIMD(A,X,nrl,ncl,nrh,nch);
-	erosion3x3_SIMD(X,B,nrl,ncl,nrh,nch);
-	free_vui8matrix(X,nrl, ncl, nrh, nch);
+	dilatation3x3_SSE2(A,X,nrl,ncl,nrh,nch);
+	erosion3x3_SSE2(X,B,nrl,ncl,nrh,nch);
 }
 
 
@@ -300,9 +299,8 @@ void fermeture3x3_SSE2(vuint8 **A,vuint8 **B,long nrl,long ncl,long nrh,long nch
 void ouverture3x3_SSE2(vuint8 **A,vuint8 **B,long nrl,long ncl,long nrh,long nch)
 {
 	vuint8 ** X = vui8matrix(nrl, ncl, nrh, nch);
-	erosion3x3_SIMD(X,B,nrl,ncl,nrh,nch);
-	dilatation3x3_SIMD(A,X,nrl,ncl,nrh,nch);
-	free_vui8matrix(X,nrl, ncl, nrh, nch);
+	erosion3x3_SSE2(A,X,nrl,ncl,nrh,nch);
+	dilatation3x3_SSE2(X,B,nrl,ncl,nrh,nch);
 }
 
 

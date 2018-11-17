@@ -12,7 +12,8 @@
 #include "test_mouvement.h"
 #include "test_morpho.h"
 #include "bench_mouvement_SSE2.h"
-
+#include "bench_morpho.h"
+#include "bench_morpho_SSE2.h"
 
 #define ENABLE_BENCHMARK 1
 
@@ -37,10 +38,7 @@ int main(void)
 // -----------
 {
     info();
-//    test_routine_sigmaDelta();
-    test_routine_SigmaDelta_SSE2();
-//    test_routine_FrameDifference_SSE2(60);
-//TEST PERFORMANCE FRAME DIFFERENCE
+    //TEST PERFORMANCE FRAME DIFFERENCE
 /*
     test_routine_FrameDifference(10);
     test_routine_FrameDifference(20);
@@ -48,14 +46,31 @@ int main(void)
     test_routine_FrameDifference(40);
     test_routine_FrameDifference(50);
     test_routine_FrameDifference(60);
+    test_routine_FrameDifference(70);
 */
-//    test_routine_sigmaDelta();
 
+//    test_routine_FrameDifference(60);
+//    test_routine_FrameDifference_SSE2(60);
+
+
+//    test_routine_sigmaDelta();
+//    test_routine_SigmaDelta_SSE2();
+
+
+//    test_routine_FrameDif_fermeture3x3_SSE2(60);
+//    test_routine_FrameDif_ouverture3x3_SSE2(60);
+
+
+//    test_routine_SD_fermeture3x3_SSE2();  
+//    test_routine_SD_ouverture3x3_SSE2();
 /*
     test_routine_FrameDifference(60);
     test_routine_FrameDifference_thread(60);
     test_routine_sigmaDelta();
 */
+
+    test_routine_FrameDifference(60);
+    test_routine_FrameDifference_SSE2_thread(60);
 /*
     test_routine_FrameDifference(60);
     test_routine_sigmaDelta();

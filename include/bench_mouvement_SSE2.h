@@ -3,6 +3,6 @@
 
 void test_routine_FrameDifference_SSE2(int threshold);
 void test_routine_SigmaDelta_SSE2();
-
+void test_routine_FrameDifference_SSE2_thread(int threshold);
 
 #endif
