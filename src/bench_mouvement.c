@@ -186,9 +186,6 @@ void test_routine_sigmaDelta()
 }
 
 
-
-//BORRRAR DESPUEST
-/*
 void test_routine_FrameDifference_thread(int threshold)
 {
     puts("----------------------------------");
@@ -206,6 +203,7 @@ void test_routine_FrameDifference_thread(int threshold)
     double t0, t1, dt, tmin, t;
     long nrl, nrh, ncl, nch; // variables needed to load images
     double time_spent = 0;
+    totalCycle = 0;
  
 
     // ------------ //
@@ -254,4 +252,3 @@ void test_routine_FrameDifference_thread(int threshold)
     free_ui8matrix(Itm1, nrl, nrh, ncl, nch );
     free_ui8matrix(Et, nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD );
 }
-*/

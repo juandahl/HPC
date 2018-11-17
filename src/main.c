@@ -71,6 +71,7 @@ int main(void)
 */
 
     test_routine_FrameDifference(60);
+    test_routine_FrameDifference_thread(60);
     test_routine_FrameDifference_SSE2_thread(60);
 /*
     test_routine_FrameDifference(60);

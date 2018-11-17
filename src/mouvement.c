@@ -118,3 +118,55 @@ void routine_SigmaDelta_step1(uint8** It, uint8** Mt1, uint8** Mt, uint8** Vt, u
                 Et[i][j] = Emouv;
         }
 }
+
+long nrl, nrh, ncl, nch;
+ // Value depend on System core 
+#define CORE 4 
+#define BORD 2 
+  
+  
+// Maximum threads is equal to total core of system 
+uint8 **I1;// = LoadPGM_ui8matrix("hall/hall000%03d.pgm", &nrl, &nrh, &ncl, &nch);
+uint8 **I0;// = ui8matrix(nrl, nrh, ncl, nch);
+uint8 **E0;// = ui8matrix(nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD);
+ pthread_t thread[CORE]; 
+// Subtraction of a Matrix 
+void* subtractionSimple(void* arg) 
+{    
+    int core = (int)arg;
+    uint8** O0 = ui8matrix(nrl, nrh, ncl, nch);
+    uint8 dif;
+    // Each thread computes 1/4th of matrix subtraction
+    for (int i = core * (int)nrh / 4; i < (core + 1) * (int)nrh / 4; i++) 
+    {
+        for(int j = ncl; j < nch; j++ )
+        {
+	    dif = abs(I1[i][j] - I0[i][j]);
+            O0[i][j] = dif; 
+    	    if(dif < 60)
+                E0[i][j] = Efond; //pas de mouvement
+            else
+                E0[i][j] = Emouv; //si mouvement
+         }
+    }  
+} 
+ void routine_FrameDifference_thread(uint8** I1p, uint8** I0p, uint8** E0p, long rawl, long rawh, long coll, long colh, int threshold)
+{
+    nrl = rawl;
+    nrh = rawh;
+    ncl = coll;
+    nch = colh;
+    I1 = I1p;
+    I0 = I0p;
+    E0 = E0p;
+     int i, j = 0; 
+    // Creating threads equal 
+    // to core size and compute matrix row 
+    for (i = 0; i < CORE; i++) {
+        pthread_create(&thread[i], NULL, &subtractionSimple, (void*)i);
+    } 
+     // Waiting for join threads after compute 
+    for (i = 0; i < CORE; i++) {
+        pthread_join(thread[i], NULL); 
+    }   
+}
