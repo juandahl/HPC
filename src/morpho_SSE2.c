@@ -321,4 +321,3 @@ void ouverture3x3_SSE2(vuint8 **A,vuint8 **B,long nrl,long ncl,long nrh,long nch
 
 
 
-

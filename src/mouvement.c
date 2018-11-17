@@ -20,9 +20,6 @@
 
 long nrl, nrh, ncl, nch;
 
-
-
-
 // Value depend on System core 
 #define CORE 4 
 #define BORD 2 

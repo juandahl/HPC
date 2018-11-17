@@ -6,6 +6,13 @@
 #include "vnrutil.h"
 #include "mouvement_SSE2.h"
 
+#define BORD 2
+#define NUMBER_IMAGES 299
+#define VMIN 20
+#define VMAX 255
+
+#define N 2
+
 
 void routine_FrameDifference_SSE2(vuint8 **I1, vuint8 **I0, vuint8 **Et, long rawl, long rawh, long coll, long colh, vuint8 threshold)
 {
@@ -19,10 +26,10 @@ void routine_FrameDifference_SSE2(vuint8 **I1, vuint8 **I0, vuint8 **Et, long ra
         for(int j = coll; j <= colh; j++)
         {
             //Calcul de Ot, image de difference en niveau de gris
-	    //chargement des pixels
+	        //chargement des pixels
             tmpI1 = _mm_load_si128(&I1[i][j]);
             tmpI0 = _mm_load_si128(&I0[i][j]);
-	    //calcul valeur absolue
+	        //calcul valeur absolue
             vuint8 max = _mm_max_epu8(tmpI1, tmpI0);
             vuint8 min = _mm_min_epu8(tmpI1, tmpI0);
             tmpOt = _mm_sub_epi8(max, min);
@@ -60,7 +67,7 @@ void routine_SigmaDelta_step0_SSE2(vuint8** It1, vuint8 **M, vuint8 **V, long ra
 
 void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vuint8** Mt0, vuint8** Mt1, vuint8 **Et, vuint8 **V, long rawl, long rawh, long coll, long colh)
 {
-    vuint8 tmpMt0, tmpVt0, tmpIt1, tmpMt, tmpVt1, tmpOt, tmpEt;
+    vuint8 tmpMt0, tmpVt0, tmpIt1, tmpMt,tmpMt1, tmpVt1, tmpOt, tmpEt;
     vuint8 un = init_vuint8(1);
     vuint8 Vmax = init_vuint8(VMAX);
     vuint8 Vmin = init_vuint8(VMIN);
@@ -97,7 +104,7 @@ void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vu
             vuint8 max = _mm_max_epu8(tmpIt1,tmpMt1);
             vuint8 min = _mm_min_epu8(tmpIt1, tmpMt1);
             tmpOt = _mm_sub_epi8(max, min); //valeur absolue
-            
+
             //Step 3
 	    NTimesOt = init_vuint8(0);
 	    Vt0Add1 = _mm_add_epi8(tmpVt0, un);
@@ -132,7 +139,6 @@ void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vu
             _mm_store_si128(&Mt1[i][j], tmpMt1);
         }
     }
-
 }
 
 

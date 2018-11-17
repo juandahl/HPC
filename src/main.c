@@ -7,10 +7,11 @@
 #include "vnrutil.h"
 #include "vnrdef.h"
 
-//#include "bench_morpho.c"
+#include "bench_morpho.c"
+#include "bench_mouvement.c"
 #include "test_mouvement.h"
 #include "test_morpho.h"
-#include "bench_mouvement_SSE2.c"
+#include "bench_mouvement_SSE2.h"
 
 
 #define ENABLE_BENCHMARK 1
@@ -36,7 +37,9 @@ int main(void)
 // -----------
 {
     info();
-    bench_FrameDifference_SSE2(60);
+//    test_routine_sigmaDelta();
+    test_routine_SigmaDelta_SSE2();
+//    test_routine_FrameDifference_SSE2(60);
 //TEST PERFORMANCE FRAME DIFFERENCE
 /*
     test_routine_FrameDifference(10);
@@ -53,9 +56,8 @@ int main(void)
     test_routine_FrameDifference_thread(60);
     test_routine_sigmaDelta();
 */
-
 /*
-    test_routine_FrameDifference(20);
+    test_routine_FrameDifference(60);
     test_routine_sigmaDelta();
     test_routine_FrameDif_fermeture3x3(20);
     test_routine_FrameDif_ouverture3x3(20);

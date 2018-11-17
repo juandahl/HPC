@@ -598,7 +598,7 @@ void test_routine_SD_ouverture3x3()
  
 }
 
-void test_routine_SD_ouverture5x5();
+void test_routine_SD_ouverture5x5()
 {
     puts("----------------------------------");
     puts("-- test_routine_SD_ouverture5x5 --");
