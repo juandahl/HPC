@@ -11,8 +11,12 @@
 #include "bench_mouvement.c"
 #include "test_mouvement.h"
 #include "test_morpho.h"
+<<<<<<< Updated upstream
 #include "bench_mouvement_SSE2.h"
 
+=======
+#include "test_mouvement_SSE2.h"
+>>>>>>> Stashed changes
 
 #define ENABLE_BENCHMARK 1
 
@@ -37,9 +41,18 @@ int main(void)
 // -----------
 {
     info();
+
 //    test_routine_sigmaDelta();
     test_routine_SigmaDelta_SSE2();
 //    test_routine_FrameDifference_SSE2(60);
+
+
+//TEST UNITAIRE MOUVEMENT_SSE2
+/*
+    test_unitaire_FrameDifference_SSE2();
+    test_unitaire_SigmaDelta_SSE2();
+*/
+
 //TEST PERFORMANCE FRAME DIFFERENCE
 /*
     test_routine_FrameDifference(10);

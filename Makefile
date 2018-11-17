@@ -4,7 +4,11 @@
 
 
 # -- Lile list ----------
+<<<<<<< Updated upstream
 FILE = main.c nrutil.c vnrutil.c mouvement.c test_mouvement.c morpho.c test_morpho.c ROC.c bench_mouvement_SSE2.c mouvement_SSE2.c
+=======
+FILE = main.c nrutil.c vnrutil.c mouvement.c test_mouvement.c morpho.c test_morpho.c ROC.c test_mouvement_SSE2.c
+>>>>>>> Stashed changes
 
 # -- Paths ----------
 SRC_PATH = src
