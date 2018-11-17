@@ -10,7 +10,7 @@
 
 #include <pthread.h> 
 
-#define VMIN 25
+#define VMIN 100
 #define VMAX 255
 
 #define Efond 0
