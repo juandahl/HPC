@@ -5,7 +5,9 @@
 #include "nrutil.h"
 #include "mymacro.h"
 
-#include "bench_morpho.c"
+//#include "bench_morpho.c"
+#include "test_mouvement.h"
+#include "test_morpho.h"
 
 #define ENABLE_BENCHMARK 1
 

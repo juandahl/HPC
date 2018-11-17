@@ -52,8 +52,8 @@ $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
    
 #-----Main rule ----------
-$(PRODUCT): $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS) $(OPTFLAGS) $(CFG) $(INC) $(LIB) -lm
+$(EXE_PATH)/$(PRODUCT): $(OBJ)
+	$(CC) -o $@ $^ $(LDFLAGS) $(OPTFLAGS) $(CFG) $(INC) $(LIB) -lm -pthread
 
 # -- Other stuff ----------
 depend:
@@ -61,5 +61,5 @@ depend:
 
 clean:
 	rm -f $(OBJ)
-	rm -f ${LIB_PATH}/${PRODUCT}
+	rm -f ${EXE_PATH}/${PRODUCT}
 
