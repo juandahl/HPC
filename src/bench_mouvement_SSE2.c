@@ -1,4 +1,4 @@
-//test_mouvement_SSE2.c
+//bench_mouvement_SSE2.c
 #include <stdio.h>
 #include <stdlib.h>
 #include "vnrdef.h"
@@ -6,6 +6,7 @@
 #include "nrdef.h"
 #include "nrutil.h"
 #include "mouvement_SSE2.h"
+#include "bench_mouvement_SSE2.h"
 #include "mymacro.h"
 
 #define BORD 2
@@ -77,10 +78,6 @@ void test_routine_FrameDifference_SSE2(int threshold)
 
 
 
-void test_unitaire_SigmaDelta_SSE2(){
-
-
-}
 
 
 /*

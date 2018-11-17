@@ -10,6 +10,8 @@
 
 #include <pthread.h> 
 
+#include "bench_mouvement.h"
+
 #define VMIN 25
 #define VMAX 255
 
