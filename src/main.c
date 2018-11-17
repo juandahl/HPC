@@ -4,6 +4,8 @@
 #include "nrdef.h"
 #include "nrutil.h"
 #include "mymacro.h"
+#include "vnrutil.h"
+#include "vnrdef.h"
 
 //#include "bench_morpho.c"
 #include "test_mouvement.h"
