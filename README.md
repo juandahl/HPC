@@ -6,6 +6,7 @@
 - exe
 - src
 - obj
+- hall (contenant les images sources)
 
 **Et ajouter les images sources dans le répertoire "hall".**
 
