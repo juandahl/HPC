@@ -6,4 +6,5 @@
 - exe
 - src
 - obj
-Et ajouter les images sources dans le répertoire "hall".
+
+**Et ajouter les images sources dans le répertoire "hall".**
