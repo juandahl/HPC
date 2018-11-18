@@ -8,3 +8,10 @@
 - obj
 
 **Et ajouter les images sources dans le répertoire "hall".**
+
+**Remarques**
+Nous avons testé nos algorithmes sur deux OS différents:
+- Ubuntu
+- MAC OS
+
+Sur Ubuntu le code marche parfaitement tandis que sur Mac OS, nous avons obtenu des segmentations fault. Nous voulons juste prévenir M. LACASSAGNE qui possède un MAC de cette erreur probable.
