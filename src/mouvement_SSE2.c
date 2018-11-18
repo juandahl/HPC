@@ -9,7 +9,7 @@
 
 #define BORD 2
 #define NUMBER_IMAGES 299
-#define VMIN 20
+#define VMIN 40
 #define VMAX 255
 
 #define N 2
@@ -146,6 +146,7 @@ void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vu
     vuint8 Vt0Add1, Vt0Sub1;
     vuint8 signe = init_vuint8(128);
     vuint8 Emouv = init_vuint8(255); //pixel blanc qui correspond à un mouvement
+    vuint8 Efond = init_vuint8(0); 
 
     for(int i = rawl; i <= rawh; i++ )
     {
@@ -199,10 +200,9 @@ void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vu
 
             //Step 4
 	    //si Ot < Vt
-            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpOt,signe), _mm_sub_epi8(tmpVt1,signe));
+            result = _mm_cmplt_epi8(_mm_sub_epi8(tmpOt, signe), _mm_sub_epi8(tmpVt1, signe));
+            vuint8 destination = _mm_or_si128(_mm_and_si128(result, Efond), _mm_andnot_si128(result, Emouv)); 
 
-	    //Inverse les 255 et 0 pour avoir la bonne couleur de pixel
-            vuint8 destination = _mm_andnot_si128(result, Emouv);
 
             _mm_store_si128(&Et[i][j], destination);
             _mm_store_si128(&Vt1[i][j], tmpVt1);
@@ -210,10 +210,5 @@ void routine_SigmaDelta_step1_SSE2(vuint8** It1,  vuint8** Vt0, vuint8** Vt1, vu
         }
     }
 }
-
-
-
-
-
 
 

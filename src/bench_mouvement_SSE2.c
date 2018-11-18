@@ -16,46 +16,36 @@
 #define VMAX 240
 
 
-void getMatrixSIMD(vuint8 **vX1, uint8 **Itm1, int vi0, int vi1, int vj0, int vj1)
+void getMatrixSIMD(vuint8 **vA, uint8 **Iscal, int vnrl, int vnrh, int vncl, int vnch)
 {
-    vuint8 x;
-    vuint8 T[1];
-    uint8 *p = (uint8*) T;
-    int cpt = 0;
+    vuint8 vAux[1];
 
-    for(int i = vi0; i <=vi1; i++)
-    {
-        for(int j = vj0; j <= vj1; j++)
+    uint8 *p = (uint8*) vAux;
+    for(int i = vnrl; i <=vnrh; i++)
+        for(int j = vncl; j <= vnch; j++)
         {
             for(int k = 0; k < 16; k++)
-            {
-                p[k] = Itm1[i][j*16+k];
-            }
-            vX1[i][j] = T[0];
+                p[k] = Iscal[i][j*16+k];
+
+            vA[i][j] = vAux[0];
         }
-    }
 }
 
-void getMatrixNum(vuint8 **vX1, uint8 **Itm1, int vi0, int vi1, int vj0, int vj1)
+void getMatrixNum(vuint8 **vA, uint8 **Iscal, int vnrl, int vnrh, int vncl, int vnch)
 {
-    vuint8 T[1];
+    vuint8 vAux[1];
     vuint8 x;
 
-    uint8 *p = (uint8*) T;
-    int cpt = 0;
+    uint8 *p = (uint8*) vAux;
 
-    for(int i = vi0; i <=vi1; i++)
-    {
-        for(int j = vj0; j <= vj1; j++)
+    for(int i = vnrl; i <=vnrh; i++)
+        for(int j = vncl; j <= vnch; j++)
         {
-            x = _mm_load_si128(&vX1[i][j]);
-            _mm_store_si128(T, x);
+            x = _mm_load_si128(&vA[i][j]);
+            _mm_store_si128(vAux, x);
             for(int k = 0; k < 16; k++)
-            {
-                Itm1[i][j*16+k] = p[k];
-            }
+                Iscal[i][j*16+k] = p[k];
         }
-    }
 }
 
 void test_routine_FrameDifference_SSE2(int threshold)

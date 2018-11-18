@@ -21,11 +21,20 @@
 long nrl, nrh, ncl, nch;
 
 #define BORD 2 
+
+//THREAD MACROS AND variables needed
+#define CORE 4  // Value depend on System core
+  
+  
+// Maximum threads is equal to total core of system 
+uint8 **I1;
+uint8 **I0;
+uint8 **E0;
+pthread_t thread[CORE]; 
   
 
 void routine_FrameDifference(uint8** I1, uint8** I0, uint8** E0, long rawl, long rawh, long coll, long colh, int threshold)
 {
-
     nrl = rawl;
     nrh = rawh;
     ncl = coll;
@@ -37,14 +46,12 @@ void routine_FrameDifference(uint8** I1, uint8** I0, uint8** E0, long rawl, long
         for(int j = ncl; j < nch; j++)
         {
             O0[i][j] = abs(I1[i][j] - I0[i][j]);
-	    if(O0[i][j] < threshold)
+	        if(O0[i][j] < threshold)
                 E0[i][j] = Efond; //pas de mouvement
             else
                 E0[i][j] = Emouv; //si mouvement
-
         }
-    }
-    
+    }   
 }
 
 int maxmin(uint8 ** Vt)
@@ -70,11 +77,9 @@ void routine_SigmaDelta_step0_initialisation(uint8** It1, uint8 **M, uint8 **V, 
         {
             M[i][j] = It1[i][j];
             V[i][j] = VMIN;
-
         }
 }
 
-//Mt = moyenne, vt= variance, Mt1 = Mt-1, Et = result  
 void routine_SigmaDelta_step1(uint8** It, uint8** Mt1, uint8** Mt, uint8** Vt, uint8** Vt1, uint8** Et){
     //Verifier parameters et var locales
     uint8 **Ot = ui8matrix(nrl, nrh, ncl, nch);
@@ -119,18 +124,7 @@ void routine_SigmaDelta_step1(uint8** It, uint8** Mt1, uint8** Mt, uint8** Vt, u
         }
 }
 
-long nrl, nrh, ncl, nch;
- // Value depend on System core 
-#define CORE 4 
-#define BORD 2 
-  
-  
-// Maximum threads is equal to total core of system 
-uint8 **I1;// = LoadPGM_ui8matrix("hall/hall000%03d.pgm", &nrl, &nrh, &ncl, &nch);
-uint8 **I0;// = ui8matrix(nrl, nrh, ncl, nch);
-uint8 **E0;// = ui8matrix(nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD);
- pthread_t thread[CORE]; 
-// Subtraction of a Matrix 
+// Subtraction of a Matrix used in thread version
 void* subtractionSimple(void* arg) 
 {    
     int core = (int)arg;
