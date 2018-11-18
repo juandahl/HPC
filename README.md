@@ -10,6 +10,7 @@
 **Et ajouter les images sources dans le répertoire "hall".**
 
 **Remarques**
+
 Nous avons testé nos algorithmes sur deux OS différents:
 - Ubuntu
 - MAC OS
