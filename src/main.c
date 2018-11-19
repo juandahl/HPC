@@ -7,9 +7,8 @@
 #include "vnrutil.h"
 #include "vnrdef.h"
 
-#include "bench_morpho.c"
-#include "bench_mouvement.c"
-#include "test_mouvement.h"
+#include "bench_morpho.h"
+#include "bench_mouvement.h"
 #include "bench_mouvement_SSE2.h"
 #include "bench_morpho.h"
 #include "bench_morpho_SSE2.h"
@@ -66,7 +65,6 @@ int main(void)
     test_routine_FrameDifference_thread(60);
     test_routine_sigmaDelta();
 */
-
 //TEST SOLUTION ROC 
 /*
     test_routine_FrameDifference(60);

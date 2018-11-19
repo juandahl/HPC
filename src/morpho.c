@@ -8,8 +8,8 @@
 
 void routine_dilatation3x3(uint8** X,uint8** B, long nrl, long ncl, long nrh, long nch)
 {
-	//Pour des images binaires, la dilatation consiste à calculer un OR sur le voisinage B dans l’image source
-	// et à l’écrire dans l’image destination. Inversement l’érosion consiste à calculer un AND sur le voisinage.
+    //Pour des images binaires, la dilatation consiste à calculer un OR sur le voisinage B dans l’image source
+    // et à l’écrire dans l’image destination. Inversement l’érosion consiste à calculer un AND sur le voisinage.
     uint8 result;
     for(int i=nrl; i<=nrh; i++)
         for(int j=ncl; j<=nch; j++)
@@ -66,7 +66,7 @@ void routine_dilatation5x5(uint8** X,uint8** B, long nrl, long ncl, long nrh, lo
         for(int j=ncl; j<=nch; j++)
         {
         	//it is inicialize in 0 because it is an Or
-        	result = 0;
+            result = 0;
     	    for(int k=j-2; k<=j+2; k++)
 		        for(int l=i-2; l<=i+2; l++)
 		        	result = result | X[i][j];

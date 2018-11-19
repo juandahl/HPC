@@ -8,7 +8,8 @@
 #include "nrdef.h"
 #include "nrutil.h"
 
-#include <pthread.h> 
+#include <pthread.h>
+#include "mymacro.h" 
 
 #include "bench_mouvement.h"
 
@@ -29,9 +30,9 @@ long nrl, nrh, ncl, nch;
 #define BORD 2  
   
 // Maximum threads is equal to total core of system 
-uint8 **I1;// = LoadPGM_ui8matrix("hall/hall000%03d.pgm", &nrl, &nrh, &ncl, &nch);
-uint8 **I0;// = ui8matrix(nrl, nrh, ncl, nch);
-uint8 **E0;// = ui8matrix(nrl-BORD, nrh+BORD, ncl-BORD, nch+BORD);
+uint8 **I1;
+uint8 **I0;
+uint8 **E0;
 
 pthread_t thread[CORE]; 
 

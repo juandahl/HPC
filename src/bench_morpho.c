@@ -12,7 +12,7 @@
 #define NUMBER_IMAGES 299
 #define BORD 2
 
-//unit test for frame difference
+
 void test_routine_FrameDif_fermeture3x3(int threshold)
 {
     puts("----------------------------------------");
